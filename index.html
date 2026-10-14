@@ -1,1 +1,1606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GREENBITE - Food Waste to Food Share</title>
+    <style>
+        /* --- GLOBAL BASE & RESET --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            background: #f8f9fa;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* View Routing Control */
+        .page-view {
+            display: none;
+        }
+
+        .page-view.active-view {
+            display: block;
+        }
+
+        /* --- NAVIGATION & HEADER --- */
+        header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover {
+            color: #2ecc71;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: #2ecc71;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .cta-btn {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+            cursor: pointer;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(46, 204, 113, 0.4);
+        }
+
+        /* --- HERO SECTION (HOME) --- */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            margin-top: 80px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveBackground 20s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .hero-content {
+            text-align: center;
+            color: white;
+            z-index: 1;
+            padding: 2rem;
+            max-width: 900px;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease 0.2s backwards;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            animation: fadeInUp 1s ease 0.4s backwards;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 1rem 2.5rem;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255,255,255,0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- HOW IT WORKS SECTION --- */
+        .how-it-works {
+            padding: 6rem 5%;
+            background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            color: #2c3e50;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .step {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+
+        .step:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+        }
+
+        .step-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .step h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .step p {
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+
+        /* --- FEATURES SECTION --- */
+        .features {
+            padding: 6rem 5%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* --- IMPACT SECTION --- */
+        .impact {
+            padding: 6rem 5%;
+            background: #fff;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 3rem auto;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 4rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+        }
+
+        /* --- PARTNERS SECTION --- */
+        .partners {
+            padding: 6rem 5%;
+            background: #f8f9fa;
+        }
+
+        .partner-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 3rem auto;
+        }
+
+        .partner-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .partner-card:hover {
+            transform: scale(1.05);
+        }
+
+        .partner-card h4 {
+            margin-bottom: 1rem;
+            color: #2c3e50;
+            font-size: 1.3rem;
+        }
+
+        /* --- CONTACT VIEW STYLES --- */
+        .page-header {
+            height: 50vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            margin-top: 80px;
+            position: relative;
+        }
+
+        .page-header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease 0.2s backwards;
+        }
+
+        .contact-wrapper {
+            max-width: 1200px;
+            margin: -100px auto 50px;
+            padding: 0 5%;
+            position: relative;
+            z-index: 10;
+        }
+
+        .contact-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+        }
+
+        .contact-form-section {
+            padding: 3rem;
+        }
+
+        .contact-form-section h2 {
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #eef2f7;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus, 
+        .form-group select:focus, 
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2ecc71;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(46, 204, 113, 0.3);
+        }
+
+        .contact-info-section {
+            background: #f1f8e9;
+            padding: 3rem;
+            border-left: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+
+        .info-icon {
+            background: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            color: #27ae60;
+        }
+
+        .info-content h3 {
+            margin-bottom: 0.3rem;
+            color: #2c3e50;
+        }
+
+        .info-content p {
+            color: #7f8c8d;
+            line-height: 1.5;
+        }
+
+        .faq-section {
+            max-width: 800px;
+            margin: 5rem auto;
+            padding: 0 5%;
+        }
+
+        .faq-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .faq-item:hover {
+            transform: translateX(10px);
+            border-left: 5px solid #2ecc71;
+        }
+
+        .faq-item h3 {
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .faq-item p {
+            color: #7f8c8d;
+        }
+
+        /* --- JOIN US VIEW STYLES --- */
+        .join-wrapper {
+            max-width: 1100px;
+            margin: 110px auto 3.2rem;
+            padding: 0 5%;
+        }
+
+        .join-hero {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 2.4rem;
+            border-radius: 18px;
+            box-shadow: 0 20px 50px rgba(118,75,162,0.12);
+        }
+
+        .join-hero .left { flex: 1; }
+        .join-hero h1 { font-size: 2rem; margin-bottom: 0.6rem; }
+        .join-hero p { opacity: 0.95; line-height: 1.4; margin-bottom: 1rem; }
+        .join-hero .primary { background: #fff; color: #667eea; padding: .7rem 1.4rem; border-radius: 30px; font-weight: 600; display: inline-block; text-decoration: none; }
+        .join-hero .secondary { border: 2px solid rgba(255,255,255,0.2); padding: .6rem 1.2rem; border-radius: 30px; color: #fff; text-decoration: none; margin-left: .6rem; }
+
+        .roles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.6rem;
+            margin-top: 2rem;
+        }
+
+        .role-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 1.6rem;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-start;
+            transition: transform .22s, box-shadow .22s;
+        }
+
+        .role-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 50px rgba(0,0,0,0.08);
+        }
+
+        .role-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: 1.8rem;
+            color: #fff;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            box-shadow: 0 8px 20px rgba(46,204,113,0.15);
+        }
+
+        .role-title { font-size: 1.15rem; font-weight: 700; color: #2c3e50; }
+        .role-desc { color: #6b7280; font-size: 0.95rem; line-height: 1.4; }
+
+        .select-btn {
+            margin-top: auto;
+            align-self: stretch;
+            text-align: center;
+            padding: .7rem 1rem;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            background: linear-gradient(135deg,#2ecc71,#27ae60);
+            color: #fff;
+        }
+
+        /* Join Form Modal */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(10,12,15,0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 1.6rem;
+        }
+
+        .modal {
+            width: 100%;
+            max-width: 760px;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+            overflow: hidden;
+            transform: translateY(20px) scale(.995);
+            opacity: 0;
+            transition: all .28s cubic-bezier(.2,.9,.3,1);
+        }
+
+        .modal.show {
+            transform: none;
+            opacity: 1;
+        }
+
+        .modal-head {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.4rem 1.6rem;
+            background: linear-gradient(90deg,#f5f7fb,#ffffff);
+        }
+
+        .modal-head .m-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            font-size: 1.6rem;
+            color: #fff;
+        }
+
+        .modal-body {
+            padding: 1.6rem;
+            display: grid;
+            gap: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .form-row .full { grid-column: 1 / -1; }
+
+        .form-row label {
+            font-size: .85rem;
+            color: #2c3e50;
+            margin-bottom: .4rem;
+            display: block;
+            font-weight: 600;
+        }
+
+        .form-row input[type="text"],
+        .form-row input[type="email"],
+        .form-row input[type="tel"],
+        .form-row textarea,
+        .form-row select {
+            width: 100%;
+            padding: .7rem .9rem;
+            border-radius: 10px;
+            border: 1px solid rgba(44,62,80,0.08);
+            font-size: .95rem;
+            background: #fff;
+        }
+
+        .form-row textarea { min-height: 110px; resize: vertical; }
+        .hint { font-size: .82rem; color: #7f8c8d; margin-top: .25rem; }
+
+        .form-actions {
+            display: flex;
+            gap: .8rem;
+            justify-content: flex-end;
+            padding: 1rem 1.6rem;
+            background: #fbfbfb;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid rgba(44,62,80,0.08);
+            padding: .7rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg,#2ecc71,#27ae60);
+            color: #fff;
+            padding: .7rem 1.2rem;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .donor-theme .m-icon,
+        .donor-theme .role-icon { background: linear-gradient(135deg,#2ecc71,#27ae60); }
+        .ngo-theme .m-icon,
+        .ngo-theme .role-icon { background: linear-gradient(135deg,#667eea,#764ba2); }
+
+        .success {
+            text-align: center;
+            padding: 2.4rem;
+            display: none;
+        }
+
+        .success.show { display: block; }
+
+        /* Join FAQ / Accordion */
+        .faq-wrap {
+            margin-top: 2.2rem;
+            max-width: 1100px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .faq-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 1.2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            margin-bottom: 1rem;
+        }
+
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .accordion-item {
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(44,62,80,0.04);
+        }
+
+        .accordion-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 1.2rem;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .accordion-btn h4 {
+            font-size: 1rem;
+            color: #2c3e50;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .accordion-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg,#f1f3f5,#ffffff);
+            font-size: 1rem;
+            color: #667;
+        }
+
+        .accordion-panel {
+            padding: 0 1.2rem 1rem 1.2rem;
+            color: #6b7280;
+            display: none;
+            line-height: 1.5;
+        }
+
+        .accordion-item.open .accordion-panel { display: block; }
+        .accordion-item.open .accordion-icon { transform: rotate(90deg); transition: transform .18s; }
+
+        /* --- FOOTER --- */
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 3rem 5%;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        .footer-links a:hover {
+            color: #2ecc71;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: #2ecc71;
+            transform: translateY(-3px);
+        }
+
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* --- RESPONSIVE DESIGN --- */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .hero p { font-size: 1.2rem; }
+            .section-title { font-size: 2rem; }
+            .nav-links { display: none; }
+            .contact-card { grid-template-columns: 1fr; }
+            .page-header h1 { font-size: 2.5rem; }
+            .contact-info-section { order: -1; padding: 2rem; }
+            .form-row { grid-template-columns: 1fr; }
+            .join-hero { flex-direction: column; text-align: center; }
+            .join-hero .left, .join-hero .right { width: 100%; }
+            .faq-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <nav>
+            <a onclick="showView('home')" class="logo">🌱 GREENBITE</a>
+            <ul class="nav-links">
+                <li><a onclick="showView('home', 'home')">Home</a></li>
+                <li><a onclick="showView('home', 'how')">How It Works</a></li>
+                <li><a onclick="showView('home', 'features')">Features</a></li>
+                <li><a onclick="showView('home', 'impact')">Impact</a></li>
+                <li><a onclick="showView('home', 'partners')">Partners</a></li>
+            </ul>
+            <a onclick="showView('join')" class="cta-btn">Join Us</a>
+        </nav>
+    </header>
+
+    <!-- VIEW 1: HOME PAGE -->
+    <main id="view-home" class="page-view active-view">
+        <section class="hero" id="home">
+            <div class="hero-content">
+                <h1 class="float">Transform Food Waste into Hope</h1>
+                <p>Connecting surplus food from cloud kitchens to those in need through NGOs and our dedicated delivery partners</p>
+                <div class="hero-buttons">
+                    <a onclick="showView('join')" class="btn-primary">Get Started</a>
+                    <a onclick="showView('home', 'how')" class="btn-secondary">Learn More</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="how-it-works" id="how">
+            <h2 class="section-title">How GREENBITE Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-icon">🍽️</div>
+                    <h3>Surplus Food</h3>
+                    <p>Cloud kitchens and restaurants register excess food on our platform in real-time</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">🤝</div>
+                    <h3>NGO Connection</h3>
+                    <p>Our AI matches surplus food with verified NGOs serving communities in need</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">🚚</div>
+                    <h3>Swift Delivery</h3>
+                    <p>Our delivery partners ensure food reaches those who need it while it's still fresh</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">❤️</div>
+                    <h3>Make Impact</h3>
+                    <p>Track your contribution to reducing waste and feeding communities</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="features" id="features">
+            <h2 class="section-title">Why Choose GREENBITE?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Real-Time Matching</h3>
+                    <p>Intelligent algorithms connect surplus food with nearby NGOs instantly, ensuring freshness and efficiency</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Easy to Use</h3>
+                    <p>Simple interface for restaurants, NGOs, and delivery partners to coordinate seamlessly</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3>Environmental Impact</h3>
+                    <p>Reduce carbon footprint by preventing food waste and supporting sustainability</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Track Your Impact</h3>
+                    <p>Detailed analytics showing meals saved, CO2 reduced, and lives impacted</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✅</div>
+                    <h3>Verified Network</h3>
+                    <p>All NGOs and partners are thoroughly verified for safety and reliability</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Cost Savings</h3>
+                    <p>Restaurants reduce waste disposal costs while earning tax benefits</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="impact" id="impact">
+            <h2 class="section-title">Our Impact So Far</h2>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number">11k+</div>
+                    <div class="stat-label">Meals Delivered</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">100+</div>
+                    <div class="stat-label">Partner Restaurants</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">75+</div>
+                    <div class="stat-label">NGO Partners</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">40K kg</div>
+                    <div class="stat-label">Food Waste Saved</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="partners" id="partners">
+            <h2 class="section-title">Join Our Growing Network</h2>
+            <div class="partner-grid">
+                <div class="partner-card">
+                    <h4>🏢 Cloud Kitchens</h4>
+                    <p>List your surplus food and make a difference while reducing waste costs</p>
+                </div>
+                <div class="partner-card">
+                    <h4>🤲 NGOs</h4>
+                    <p>Access fresh, quality food to serve your communities effectively</p>
+                </div>
+                <div class="partner-card">
+                    <h4>🚗 Delivery Partners</h4>
+                    <p>Earn while contributing to a meaningful cause in your community</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- VIEW 2: CONTACT PAGE -->
+    <main id="view-contact" class="page-view">
+        <div class="page-header">
+            <div>
+                <h1>Get in Touch</h1>
+                <p>Have questions? We'd love to hear from you.</p>
+            </div>
+        </div>
+
+        <div class="contact-wrapper">
+            <div class="contact-card">
+                <div class="contact-form-section">
+                    <h2>Send us a Message</h2>
+                    <form action="#">
+                        <div class="form-group">
+                            <label>Your Name</label>
+                            <input type="text" placeholder="John Doe" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" placeholder="john@example.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>I am a...</label>
+                            <select>
+                                <option value="general">General User</option>
+                                <option value="donor">Restaurant / Donor</option>
+                                <option value="ngo">NGO Representative</option>
+                                <option value="driver">Delivery Partner</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Message</label>
+                            <textarea rows="5" placeholder="How can we help you?" required></textarea>
+                        </div>
+
+                        <button type="submit" class="submit-btn">Send Message</button>
+                    </form>
+                </div>
+
+                <div class="contact-info-section">
+                    <div class="info-item">
+                        <div class="info-icon">📍</div>
+                        <div class="info-content">
+                            <h3>Headquarters</h3>
+                            <p>FoodConnect HQ<br>Green Valley Road<br>Delhi, India</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">📞</div>
+                        <div class="info-content">
+                            <h3>Phone</h3>
+                            <p>+91 98765 43210<br><span style="font-size: 0.9em; color: #aaa;">Mon-Fri, 9am - 6pm</span></p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">✉️</div>
+                        <div class="info-content">
+                            <h3>Email</h3>
+                            <p>support@greenbite.com<br>partners@greenbite.com</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-icon">💬</div>
+                        <div class="info-content">
+                            <h3>Live Chat</h3>
+                            <p>Available on our mobile app for urgent delivery issues.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="faq-section">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <h3>How do I sign up as a Donor? <span>+</span></h3>
+                <p>You can click the "Join Us" button in the top right corner and select "Sign up as Donor" to register your restaurant or kitchen.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>Is the food collection free? <span>+</span></h3>
+                <p>Yes! We do not charge donors for food collection. Our mission is to reduce waste and feed the needy.</p>
+            </div>
+
+            <div class="faq-item">
+                <h3>How do you verify NGOs? <span>+</span></h3>
+                <p>We have a strict verification process involving document checks and physical site visits to ensure safety and transparency.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- VIEW 3: JOIN US PAGE -->
+    <main id="view-join" class="page-view">
+        <div class="join-wrapper">
+            <section class="join-hero" aria-labelledby="join-title">
+                <div class="left">
+                    <h1 id="join-title">Join GREENBITE — Make surplus food count</h1>
+                    <p>Are you a donor (restaurant/cloud kitchen/home), an NGO, or a delivery partner? Pick your role and fill a quick form — we’ll take it from there.</p>
+                    <div style="margin-top:1rem;">
+                        <a class="primary" href="#roles" onclick="scrollToElement('roles')">Choose your role</a>
+                        <a class="secondary" href="#join-faq" onclick="scrollToElement('join-faq')" style="margin-left:.6rem;">FAQ</a>
+                    </div>
+                </div>
+                <div class="right" style="min-width:220px; text-align:center;">
+                    <div style="background:rgba(255,255,255,0.06); padding:1rem; border-radius:12px;">
+                        <div style="font-size:2.2rem; font-weight:700;">🤝</div>
+                        <div style="color:#fff; opacity:.95; margin-top:.6rem;">Join our verified network</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="roles" style="margin-top:1.8rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                    <h2 style="font-size:1.4rem;">Who are you?</h2>
+                    <div style="color:#6b7280; font-size:.95rem;">Pick one to continue — UI will adapt for your needs</div>
+                </div>
+
+                <div class="roles">
+                    <div class="role-card" role="button" aria-pressed="false">
+                        <div class="role-icon" aria-hidden="true">🍽️</div>
+                        <div>
+                            <div class="role-title">Donor — Restaurant / Cloud Kitchen / Home</div>
+                            <div class="role-desc">Report surplus meals, pickup time windows, portion type and approximate quantity.</div>
+                        </div>
+                        <button class="select-btn" data-role="donor">I'm a Donor</button>
+                    </div>
+
+                    <div class="role-card" role="button" aria-pressed="false">
+                        <div class="role-icon" aria-hidden="true">🤲</div>
+                        <div>
+                            <div class="role-title">NGO / Community Group</div>
+                            <div class="role-desc">Receive matched donations, share capacity, service areas and collection preferences.</div>
+                        </div>
+                        <button class="select-btn" data-role="ngo">I'm an NGO</button>
+                    </div>
+
+                    <div class="role-card" role="button" aria-pressed="false">
+                        <div class="role-icon" aria-hidden="true">🚚</div>
+                        <div>
+                            <div class="role-title">Delivery Partner</div>
+                            <div class="role-desc">Sign up to transport meals between donors and NGOs and earn while helping.</div>
+                        </div>
+                        <button class="select-btn" data-role="partner">Become Partner</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="join-faq" class="faq-wrap" aria-labelledby="faq-title">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                    <h2 id="faq-title" style="font-size:1.6rem;">Frequently Asked Questions</h2>
+                    <div style="color:#6b7280; font-size:.95rem;">Quick answers to help you onboard</div>
+                </div>
+
+                <div class="faq-card">
+                    <div class="faq-grid">
+                        <div class="accordion-item" data-idx="1">
+                            <button class="accordion-btn" aria-expanded="false">
+                                <h4>How does GREENBITE verify NGOs and partners?</h4>
+                                <div class="accordion-icon">➤</div>
+                            </button>
+                            <div class="accordion-panel">
+                                We verify NGOs and delivery partners using ID documents, registration proofs, references and periodic spot checks. Verified partners get a badge and priority matching.
+                            </div>
+                        </div>
+
+                        <div class="accordion-item" data-idx="2">
+                            <button class="accordion-btn" aria-expanded="false">
+                                <h4>What kind of food can I donate?</h4>
+                                <div class="accordion-icon">➤</div>
+                            </button>
+                            <div class="accordion-panel">
+                                Prepared, packaged or raw food are all accepted depending on NGO needs. For prepared food, provide pickup windows and portion details — we match with NGOs that accept cooked meals.
+                            </div>
+                        </div>
+
+                        <div class="accordion-item" data-idx="3">
+                            <button class="accordion-btn" aria-expanded="false">
+                                <h4>Is there any cost to join?</h4>
+                                <div class="accordion-icon">➤</div>
+                            </button>
+                            <div class="accordion-panel">
+                                Joining GREENBITE is free for donors and NGOs. Delivery partners may opt into paid assignments. Organizations can opt for premium features (analytics, priority matching) — contact us to learn more.
+                            </div>
+                        </div>
+
+                        <div class="accordion-item" data-idx="4">
+                            <button class="accordion-btn" aria-expanded="false">
+                                <h4>How do you ensure food safety?</h4>
+                                <div class="accordion-icon">➤</div>
+                            </button>
+                            <div class="accordion-panel">
+                                We enforce pickup windows, simple safety guidelines, and recommended packaging. NGOs confirm acceptance only after assessing quality. For large-scale programs we provide SOPs and training.
+                            </div>
+                        </div>
+
+                        <div class="accordion-item" data-idx="5">
+                            <button class="accordion-btn" aria-expanded="false">
+                                <h4>Can I pause or cancel my listings?</h4>
+                                <div class="accordion-icon">➤</div>
+                            </button>
+                            <div class="accordion-panel">
+                                Yes — donors and NGOs can update, pause or cancel listings in the dashboard or by contacting the support team. We also accept last-minute cancellations and re-match when possible.
+                            </div>
+                        </div>
+
+                        <div class="accordion-item" data-idx="6">
+                            <button class="accordion-btn" aria-expanded="false">
+                                <h4>How do delivery partners get paid?</h4>
+                                <div class="accordion-icon">➤</div>
+                            </button>
+                            <div class="accordion-panel">
+                                Payments are handled based on earning preference (per delivery / per hour). Partners can link payout accounts during onboarding; payment terms vary by region and assignment.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal for Join Form -->
+    <div class="modal-backdrop" id="backdrop" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" id="modal">
+            <div class="modal-head">
+                <div class="m-icon" id="modal-icon">🍽️</div>
+                <div>
+                    <div id="modal-title" style="font-weight:800; font-size:1.05rem;">Sign up as Donor</div>
+                    <div style="font-size:.88rem; color:#6b7280;" id="modal-sub">Help us match your surplus food to communities in need.</div>
+                </div>
+            </div>
+
+            <form id="joinForm" class="modal-body" autocomplete="on" novalidate>
+                <input type="hidden" name="role" id="roleInput" value="donor">
+
+                <div class="form-row">
+                    <div>
+                        <label for="name">Contact Name</label>
+                        <input id="name" name="name" type="text" placeholder="e.g., Asha Kumar" required>
+                    </div>
+                    <div>
+                        <label for="org">Organization</label>
+                        <input id="org" name="organization" type="text" placeholder="Restaurant / NGO name or 'Home'">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div>
+                        <label for="email">Email</label>
+                        <input id="email" name="email" type="email" placeholder="you@domain.com" required>
+                    </div>
+                    <div>
+                        <label for="phone">Phone</label>
+                        <input id="phone" name="phone" type="tel" placeholder="+91 99XXXXXXXX" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="full">
+                        <label for="address">Pickup / Service Address</label>
+                        <input id="address" name="address" type="text" placeholder="Street, area, city">
+                        <div class="hint">Provide the best pickup location and a landmark.</div>
+                    </div>
+                </div>
+
+                <!-- Donor-specific -->
+                <div id="donorFields">
+                    <div class="form-row">
+                        <div>
+                            <label for="foodType">Food Type</label>
+                            <select id="foodType" name="foodType">
+                                <option value="prepared">Prepared / Cooked</option>
+                                <option value="raw">Raw / Ingredients</option>
+                                <option value="packaged">Packaged</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="quantity">Approx Quantity</label>
+                            <input id="quantity" name="quantity" type="text" placeholder="e.g., 20 meals / 12 kg">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="full">
+                            <label for="pickupTimes">Pickup time windows</label>
+                            <input id="pickupTimes" name="pickupTimes" type="text" placeholder="e.g., 12:00–13:00, 18:30–19:00">
+                            <div class="hint">When the food will be ready for collection.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NGO-specific -->
+                <div id="ngoFields" style="display:none;">
+                    <div class="form-row">
+                        <div>
+                            <label for="capacity">Daily Capacity</label>
+                            <input id="capacity" name="capacity" type="text" placeholder="e.g., 50 meals">
+                        </div>
+                        <div>
+                            <label for="serviceArea">Service Area</label>
+                            <input id="serviceArea" name="serviceArea" type="text" placeholder="Neighbourhoods / pin codes">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="full">
+                            <label for="needs">Collection Preferences & Needs</label>
+                            <textarea id="needs" name="needs" placeholder="e.g., Need cooked veg meals, morning collections preferred"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Partner-specific -->
+                <div id="partnerFields" style="display:none;">
+                    <div class="form-row">
+                        <div>
+                            <label for="vehicle">Vehicle Type</label>
+                            <select id="vehicle" name="vehicle">
+                                <option>Bike / Two-wheeler</option>
+                                <option>Car / Van</option>
+                                <option>Small Truck</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="availability">Availability</label>
+                            <input id="availability" name="availability" type="text" placeholder="e.g., Weekdays 9–6">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="full">
+                            <label for="earnPref">Earning Preference</label>
+                            <input id="earnPref" name="earnPref" type="text" placeholder="Per delivery / per hour">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn-submit" id="submitBtn">Submit</button>
+                </div>
+            </form>
+
+            <div class="success" id="successBox" aria-hidden="true">
+                <div style="font-size:2.2rem; margin-bottom:.6rem;">🎉 Thank you!</div>
+                <div style="color:#6b7280; margin-bottom:1rem;">Your request has been received. Our team will verify details and contact you at the provided email/phone.</div>
+                <button class="btn-submit" id="doneBtn">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <h3>🌱 GREENBITE</h3>
+            <p style="margin: 1rem 0;">Together, we can end food waste and hunger</p>
+            <div class="footer-links">
+                <a onclick="showView('home')">About Us</a>
+                <a onclick="showView('contact')">Contact</a>
+                <a href="#privacy">Privacy Policy</a>
+                <a href="#terms">Terms of Service</a>
+            </div>
+            <div class="social-links">
+                <a href="#facebook">📘</a>
+                <a href="#twitter">🐦</a>
+                <a href="#instagram">📷</a>
+                <a href="#linkedin">💼</a>
+            </div>
+            <p style="margin-top: 2rem; color: rgba(255,255,255,0.7);">© 2025 GREENBITE. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE JAVASCRIPT -->
+    <script>
+        // Router View Switcher Function
+        function showView(viewId, sectionId = null) {
+            document.querySelectorAll('.page-view').forEach(view => {
+                view.classList.remove('active-view');
+            });
+            const activeView = document.getElementById('view-' + viewId);
+            if (activeView) {
+                activeView.classList.add('active-view');
+                window.scrollTo(0, 0);
+            }
+            if (sectionId) {
+                setTimeout(() => {
+                    const el = document.getElementById(sectionId);
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+        }
+
+        function scrollToElement(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Animate Stats on Scroll
+        const observerOptions = { threshold: 0.5 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const statNumbers = entry.target.querySelectorAll('.stat-number');
+                    statNumbers.forEach(stat => {
+                        const finalValue = stat.textContent;
+                        let current = 0;
+                        const increment = parseInt(finalValue) / 50;
+                        const timer = setInterval(() => {
+                            current += increment;
+                            if (current >= parseInt(finalValue)) {
+                                stat.textContent = finalValue;
+                                clearInterval(timer);
+                            } else {
+                                stat.textContent = Math.floor(current) + (finalValue.includes('+') ? '+' : '');
+                            }
+                        }, 30);
+                    });
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        const impactSection = document.querySelector('.impact');
+        if (impactSection) observer.observe(impactSection);
+
+        // Header Shadow on Scroll
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.style.boxShadow = '0 2px 30px rgba(0,0,0,0.15)';
+            } else {
+                header.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
+            }
+        });
+
+        // Join Modal Elements & Logic
+        const selectButtons = document.querySelectorAll('.select-btn');
+        const backdrop = document.getElementById('backdrop');
+        const modal = document.getElementById('modal');
+        const modalIcon = document.getElementById('modal-icon');
+        const modalTitle = document.getElementById('modal-title');
+        const modalSub = document.getElementById('modal-sub');
+        const roleInput = document.getElementById('roleInput');
+        const donorFields = document.getElementById('donorFields');
+        const ngoFields = document.getElementById('ngoFields');
+        const partnerFields = document.getElementById('partnerFields');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const joinForm = document.getElementById('joinForm');
+        const successBox = document.getElementById('successBox');
+        const doneBtn = document.getElementById('doneBtn');
+
+        function openModal(role) {
+            document.body.classList.remove('donor-theme','ngo-theme','partner-theme');
+            if (role === 'donor') {
+                document.body.classList.add('donor-theme');
+                modalIcon.textContent = '🍽️';
+                modalTitle.textContent = 'Sign up as Donor';
+                modalSub.textContent = 'Report surplus food — we will match it with nearby NGOs.';
+                donorFields.style.display = '';
+                ngoFields.style.display = 'none';
+                partnerFields.style.display = 'none';
+            } else if (role === 'ngo') {
+                document.body.classList.add('ngo-theme');
+                modalIcon.textContent = '🤲';
+                modalTitle.textContent = 'Sign up as NGO';
+                modalSub.textContent = 'Tell us about your capacity so we can match donations.';
+                donorFields.style.display = 'none';
+                ngoFields.style.display = '';
+                partnerFields.style.display = 'none';
+            } else if (role === 'partner') {
+                document.body.classList.add('donor-theme');
+                modalIcon.textContent = '🚚';
+                modalTitle.textContent = 'Sign up as Delivery Partner';
+                modalSub.textContent = 'Transport meals between donors and NGOs.';
+                donorFields.style.display = 'none';
+                ngoFields.style.display = 'none';
+                partnerFields.style.display = '';
+            }
+
+            roleInput.value = role;
+            backdrop.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+            backdrop.setAttribute('aria-hidden','false');
+            setTimeout(() => document.getElementById('name').focus(), 250);
+        }
+
+        selectButtons.forEach(btn => {
+            btn.addEventListener('click', () => openModal(btn.dataset.role));
+        });
+
+        function closeModal() {
+            modal.classList.remove('show');
+            backdrop.setAttribute('aria-hidden','true');
+            setTimeout(() => { backdrop.style.display='none'; resetForm(); }, 300);
+        }
+
+        cancelBtn.addEventListener('click', closeModal);
+        backdrop.addEventListener('click', (e) => {
+            if (e.target === backdrop) closeModal();
+        });
+
+        joinForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            if (!name || !email || !phone) {
+                alert('Please fill name, email and phone.');
+                return;
+            }
+
+            Array.from(joinForm.elements).forEach(el => el.disabled = true);
+            joinForm.style.display = 'none';
+            successBox.classList.add('show');
+            successBox.setAttribute('aria-hidden','false');
+        });
+
+        doneBtn.addEventListener('click', closeModal);
+
+        function resetForm() {
+            joinForm.style.display = '';
+            successBox.classList.remove('show');
+            successBox.setAttribute('aria-hidden','true');
+            Array.from(joinForm.elements).forEach(el => el.disabled = false);
+            joinForm.reset();
+            donorFields.style.display = '';
+            ngoFields.style.display = 'none';
+            partnerFields.style.display = 'none';
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && backdrop.style.display === 'flex') closeModal();
+        });
+
+        // FAQ Accordions Logic
+        const accordionItems = document.querySelectorAll('.accordion-item');
+        accordionItems.forEach(item => {
+            const btn = item.querySelector('.accordion-btn');
+            btn.addEventListener('click', () => {
+                const isOpen = item.classList.contains('open');
+                accordionItems.forEach(i => {
+                    i.classList.remove('open');
+                    i.querySelector('.accordion-btn').setAttribute('aria-expanded', 'false');
+                });
+                if (!isOpen) {
+                    item.classList.add('open');
+                    btn.setAttribute('aria-expanded', 'true');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
